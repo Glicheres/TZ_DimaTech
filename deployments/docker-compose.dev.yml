@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  app:
+    container_name: backend
+    build:
+      context: ..
+      dockerfile: deployments/app/Dockerfile
+    volumes:
+      - "../backend:/app/backend"
+    env_file:
+      - dev.env
+    restart: always
+    networks:
+      - internal
+
+  database:
+    container_name: postgres
+    image: postgres:14.17-alpine
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    networks:
+      - internal
+
+networks:
+  internal:
+    driver: bridge

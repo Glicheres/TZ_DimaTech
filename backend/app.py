@@ -3,17 +3,31 @@ import logging
 
 import uvicorn
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 import backend.log as log
 import backend.migrations_runner as migrations_runner
 from backend import conf
 from backend.state import app_state
+from backend.view.admin.view import router as admin_router
+from backend.view.user.view import router as user_router
 
 log.setup_logging()
 logger = logging.getLogger(__name__)
 
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(user_router)
+app.include_router(admin_router)
 
 
 @app.on_event("startup")

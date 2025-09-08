@@ -2,3 +2,5 @@ import os
 
 DATABASE_DSN = os.environ["DATABASE_DSN"]
 AUTO_RELOAD = os.environ["AUTO_RELOAD"]
+PASSWORD_SALT = os.environ["PASSWORD_SALT"]
+COOKIE_SECRET_KEY = os.environ["COOKIE_SECRET_KEY"]

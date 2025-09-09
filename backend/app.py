@@ -11,6 +11,7 @@ from backend import conf
 from backend.state import app_state
 from backend.view.accounts.view import router as account_router
 from backend.view.admin.view import router as admin_router
+from backend.view.payment.view import router as payment_router
 from backend.view.user.view import router as user_router
 
 log.setup_logging()
@@ -30,6 +31,7 @@ app.add_middleware(
 app.include_router(user_router)
 app.include_router(admin_router)
 app.include_router(account_router)
+app.include_router(payment_router)
 
 
 @app.on_event("startup")
@@ -47,7 +49,6 @@ async def shutdown():
 if __name__ == "__main__":
     """
     Точка в хода в основной веб сервер.
-    Обрабатывает запросы от ТГ.
     """
     uvicorn.run(
         app="backend.app:app",

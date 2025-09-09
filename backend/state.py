@@ -9,6 +9,7 @@ from sqlalchemy.pool import NullPool
 
 import backend.conf as conf
 from backend.repository.account import AccountRepository
+from backend.repository.payment import PaymentRepository
 from backend.repository.sessions import SessionsRepository
 from backend.repository.users import UserRepository
 
@@ -20,6 +21,7 @@ class AppState:
         self._user_repository = None
         self._sessions_repository = None
         self._account_repository = None
+        self._payment_repository = None
 
     async def startup(self) -> None:
         # Создаем асинхронный engine с использованием asyncpg
@@ -42,6 +44,9 @@ class AppState:
             db=self._async_sessionmaker
         )
         self._account_repository = AccountRepository(
+            db=self._async_sessionmaker
+        )
+        self._payment_repository = PaymentRepository(
             db=self._async_sessionmaker
         )
 
@@ -68,6 +73,11 @@ class AppState:
     def account_repo(self) -> AccountRepository:
         assert self._account_repository
         return self._account_repository
+
+    @property
+    def payment_repo(self) -> PaymentRepository:
+        assert self._payment_repository
+        return self._payment_repository
 
 
 app_state = AppState()

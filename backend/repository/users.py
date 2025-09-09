@@ -22,7 +22,7 @@ class UserRepository:
     def __init__(self, db: async_sessionmaker):
         self.db = db
 
-    async def get_id(self, id: int):
+    async def get_id(self, id: int) -> User | None:
         sql = """
             SELECT *
             FROM "users"
@@ -38,7 +38,7 @@ class UserRepository:
                 return result
         return None
 
-    async def get_email(self, email: str):
+    async def get_email(self, email: str) -> User | None:
         sql = """
             SELECT *
             FROM "users"
@@ -54,7 +54,9 @@ class UserRepository:
                 return result
         return None
 
-    async def create(self, username: str, email: str, salt_password: str):
+    async def create(
+        self, username: str, email: str, salt_password: str
+    ) -> User | None:
         sql = """
             INSERT INTO "users" (username, email, password)
             VALUES (:username, :email, :password)
@@ -77,7 +79,7 @@ class UserRepository:
                 return result
         return None
 
-    async def get_all(self):
+    async def get_all(self) -> list[User]:
         sql = """
             SELECT *
             FROM "users"
@@ -88,7 +90,9 @@ class UserRepository:
             data = data.mappings().all()
             return [User(**user) for user in data]
 
-    async def update(self, id: int, username: str, email: str, password: str):
+    async def update(
+        self, id: int, username: str, email: str, password: str
+    ) -> User | None:
         sql = """
             UPDATE users
             SET username = :username, email = :email, password = :password

@@ -18,20 +18,20 @@ create table accounts(
     "balance" int not null default 0,
     "created_timestamp" timestamp not null default (now() at time zone 'utc')
 );
---create table payment(
---    "id" serial primary key,
---    "user_id" int not null references users(id),
---    "account_id" references account(id),
---    "amount" int not null,
---    "transaction_id" varchar(64) not null,
---    "signature" varchar(64) not null,
---    "created_timestamp" timestamp not null default (now() at time zone 'utc')
---);
-insert into users (username, email, password, is_admin)
-    values ('admin', 'admin', 'f82959d41f9330bd853d3e11345e08eda948544666bfc17806493df9d4b305f0', TRUE); -- password: admin
+create table payment(
+    "id" serial primary key,
+    "transaction_id" varchar(64) not null unique,
+    "user_id" int not null references users(id),
+    "account_id" int references accounts(id),
+    "amount" int not null,
+    "created_timestamp" timestamp not null default (now() at time zone 'utc')
+);
 
 insert into users (username, email, password)
     values ('user', 'user', '949f4ae5896a01d231c6f5af079dff23bab120cec83b787f527bc02b03f8fc91'); -- password: user
 
+insert into users (username, email, password, is_admin)
+    values ('admin', 'admin', 'f82959d41f9330bd853d3e11345e08eda948544666bfc17806493df9d4b305f0', TRUE); -- password: admin
+
 insert into accounts (user_id, balance)
-    values (2, 100);
+    values (1, 100);

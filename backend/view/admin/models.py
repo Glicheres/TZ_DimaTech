@@ -8,7 +8,6 @@ class AdminCreateUserBody(BaseModel):
 
 
 class UpdateUserBody(BaseModel):
-    id: int
     username: str
     email: str
     password: str

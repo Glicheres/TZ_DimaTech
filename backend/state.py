@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import (
 from sqlalchemy.pool import NullPool
 
 import backend.conf as conf
+from backend.repository.account import AccountRepository
 from backend.repository.sessions import SessionsRepository
 from backend.repository.users import UserRepository
 
@@ -18,6 +19,7 @@ class AppState:
         self._async_sessionmaker = None
         self._user_repository = None
         self._sessions_repository = None
+        self._account_repository = None
 
     async def startup(self) -> None:
         # Создаем асинхронный engine с использованием asyncpg
@@ -39,6 +41,9 @@ class AppState:
         self._sessions_repository = SessionsRepository(
             db=self._async_sessionmaker
         )
+        self._account_repository = AccountRepository(
+            db=self._async_sessionmaker
+        )
 
     async def shutdown(self) -> None:
         if self._async_engine:
@@ -58,6 +63,11 @@ class AppState:
     def session_repo(self) -> SessionsRepository:
         assert self._sessions_repository
         return self._sessions_repository
+
+    @property
+    def account_repo(self) -> AccountRepository:
+        assert self._account_repository
+        return self._account_repository
 
 
 app_state = AppState()

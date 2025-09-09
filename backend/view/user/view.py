@@ -44,32 +44,11 @@ async def auth_users(
 
 
 @router.get("/user")
-async def get_users(
-    user: User = Depends(check_session), id: int | None = None
-):
+async def get_users(user: User = Depends(check_session)):
     """
     Получение данных о пользователе
     """
-    if not id:
-        return GetUserResponse(
-            id=user.id, username=user.username, email=user.email
-        )
-    if not user.is_admin:
-        logger.info("Access denied")
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Access denied",
-        )
-    else:
-        required_user = await app_state.user_repo.get_id(id=id)
-        if not required_user:
-            logger.info("User does not exist")
-            return HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail="User does not exist",
-            )
-        return GetUserResponse(
-            id=required_user.id,
-            username=required_user.username,
-            email=required_user.email,
-        )
+
+    return GetUserResponse(
+        id=user.id, username=user.username, email=user.email
+    )

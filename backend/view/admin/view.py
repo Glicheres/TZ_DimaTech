@@ -6,6 +6,7 @@ from backend.helper import check_session, hash_password
 from backend.repository.users import User
 from backend.state import app_state
 from backend.view.admin.models import AdminCreateUserBody, UpdateUserBody
+from backend.view.user.models import GetUserResponse
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -55,9 +56,35 @@ async def get_all_users(admin: User = Depends(check_session)):
     return users
 
 
-@router.post("/user")
-async def update_users(
-    body: UpdateUserBody, admin: User = Depends(check_session)
+@router.get("/user/{id}")
+async def get_users(id: int, user: User = Depends(check_session)):
+    """
+    Получение данных о пользователе (админом)
+    """
+    if not user.is_admin:
+        logger.info("Access denied")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access denied",
+        )
+    else:
+        required_user = await app_state.user_repo.get_id(id=id)
+        if not required_user:
+            logger.info("User does not exist")
+            return HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="User does not exist",
+            )
+        return GetUserResponse(
+            id=required_user.id,
+            username=required_user.username,
+            email=required_user.email,
+        )
+
+
+@router.post("/user/{id}")
+async def update_user(
+    id: int, body: UpdateUserBody, admin: User = Depends(check_session)
 ):
     """
     Изменение пользователя
@@ -71,7 +98,7 @@ async def update_users(
     sault_pass = hash_password(password=body.password)
 
     user = await app_state.user_repo.update(
-        id=body.id,
+        id=id,
         username=body.username,
         email=body.email,
         password=sault_pass,
@@ -85,8 +112,8 @@ async def update_users(
     return user
 
 
-@router.delete("/user")
-async def delete_users(id: int, admin: User = Depends(check_session)):
+@router.delete("/user/{id}")
+async def delete_user(id: int, admin: User = Depends(check_session)):
     """
     Удаление пользователя
     """

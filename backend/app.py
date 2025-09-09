@@ -9,6 +9,7 @@ import backend.log as log
 import backend.migrations_runner as migrations_runner
 from backend import conf
 from backend.state import app_state
+from backend.view.accounts.view import router as account_router
 from backend.view.admin.view import router as admin_router
 from backend.view.user.view import router as user_router
 
@@ -28,6 +29,7 @@ app.add_middleware(
 
 app.include_router(user_router)
 app.include_router(admin_router)
+app.include_router(account_router)
 
 
 @app.on_event("startup")

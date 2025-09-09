@@ -13,5 +13,7 @@ create table user_sessions(
     "created_timestamp" timestamp not null default (now() at time zone 'utc')
 );
 
-insert into users (username, email, password) values ('admin', 'admin', 'admin');
-insert into users (username, email, password) values ('user', 'user', 'user');
+insert into users (username, email, password, is_admin)
+    values ('admin', 'admin', 'f82959d41f9330bd853d3e11345e08eda948544666bfc17806493df9d4b305f0', TRUE); -- password: admin
+insert into users (username, email, password)
+values ('user', 'user', '949f4ae5896a01d231c6f5af079dff23bab120cec83b787f527bc02b03f8fc91'); -- password: user

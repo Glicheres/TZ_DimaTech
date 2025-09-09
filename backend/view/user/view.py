@@ -16,7 +16,9 @@ router = APIRouter()
 async def auth_users(
     response: Response, body: Annotated[UserAuthBody, Body()]
 ):
-    # авторизация пользователя
+    """
+    Авторизация пользователя
+    """
     exist_user = await app_state.user_repo.get_email(email=body.email)
 
     if not exist_user:
@@ -45,7 +47,9 @@ async def auth_users(
 async def get_users(
     user: User = Depends(check_session), id: int | None = None
 ):
-    # получение данных о пользователе
+    """
+    Получение данных о пользователе
+    """
     if not id:
         return GetUserResponse(
             id=user.id, username=user.username, email=user.email

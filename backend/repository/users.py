@@ -72,8 +72,9 @@ class UserRepository:
                 )
         if result:
             result = result.mappings().all()
-            result = User(**result[0])
-            return result
+            if len(result) > 0:
+                result = User(**result[0])
+                return result
         return None
 
     async def get_all(self):
@@ -86,3 +87,38 @@ class UserRepository:
                 data = await session.execute(text(sql), {"id": id})
             data = data.mappings().all()
             return [User(**user) for user in data]
+
+    async def update(self, id: int, username: str, email: str, password: str):
+        sql = """
+            UPDATE users
+            SET username = :username, email = :email, password = :password
+            WHERE id = :id
+            RETURNING *
+        """
+        async with self.db() as session:
+            async with session.begin():
+                result = await session.execute(
+                    text(sql),
+                    {
+                        "id": id,
+                        "username": username,
+                        "email": email,
+                        "password": password,
+                    },
+                )
+            if result:
+                result = result.mappings().all()
+                if len(result) > 0:
+                    result = User(**result[0])
+                    return result
+            return None
+
+    async def delete(self, id: int):
+        sql = """
+            DELETE FROM users
+            WHERE id = :id
+        """
+        async with self.db() as session:
+            async with session.begin():
+                await session.execute(text(sql), {"id": id})
+        return

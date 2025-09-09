@@ -51,6 +51,33 @@ class SessionsRepository:
                 )
         if result:
             result = result.mappings().all()
-            result = Session(**result[0])
-            return result
+            if len(result) > 0:
+                result = Session(**result[0])
+                return result
         return None
+
+    async def get_by_user_id(self, user_id: int) -> Session | None:
+        sql = """
+            SELECT *
+            FROM "user_sessions"
+            WHERE "user_id" = :user_id
+        """
+        async with self.db() as session:
+            async with session.begin():
+                result = await session.execute(text(sql), {"user_id": user_id})
+        if result:
+            result = result.mappings().all()
+            if len(result) > 0:
+                result = Session(**result[0])
+                return result
+        return None
+
+    async def delete(self, id: int):
+        sql = """
+            DELETE FROM "user_sessions"
+            WHERE id = :id
+        """
+        async with self.db() as session:
+            async with session.begin():
+                await session.execute(text(sql), {"id": id})
+        return
